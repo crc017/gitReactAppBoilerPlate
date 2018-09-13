@@ -1,3 +1,3 @@
 module.exports = {
-    Factory: require("./Factory"),
+    Doc: require("./Doc.js"),
   };

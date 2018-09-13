@@ -11,12 +11,20 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//set mongoose promise library and connect mongodb 
 mongoose.Promise = global.Promise;
 mongoose.connect(
-  process.env.MONGODB_URI || 'mongodb://localhost:27017/Root'
+  process.env.MONGODB_URI || 'mongodb://localhost:27017/documentCollection'
 );
 
+
+//-----------------------------------------------------------------------//
+//-----------------------------------------------------------------------//
+//-----------------------------API ENDPOINTS-----------------------------//
+
+
 // Put all API endpoints under '/api'
+//Test GET API
 app.get('/api/test', (req, res) => {
   const fakeData = {
     status: 'ok',
@@ -25,20 +33,27 @@ app.get('/api/test', (req, res) => {
   res.json(fakeData);
 });
 
-//get all Factories API
-app.get('/api/getFactories', (req, res) => {
-  db.Factory.find().then((doc) => {
+//get all of Document Collection API
+app.get('/api/getCollection', (req, res) => {
+  db.Doc.find().then((doc) => {
     res.status(200).json(doc);
   })
 });
 
-//create Factory API
-app.post('/api/createFactory', (req, res) => {
-  db.Factory.create({
-    factory: {
-      name: req.body.factoryName
-    },
-      children: []
+//get a single Document by id API
+app.get('/api/getDoc', (req,res) => {
+  db.Doc.findById(req.body.docId,
+    (err) => {
+      if(err) return err;
+    }).then((doc) => res.send(doc))
+});
+
+//create Document API
+app.post('/api/createDoc', (req, res) => {
+  db.Doc.create({
+    field: {
+      name: req.body.fieldName
+    }
   }).then((doc) => {
     res.send(doc)
   }, (e) => {
@@ -47,22 +62,12 @@ app.post('/api/createFactory', (req, res) => {
   });
 });
 
-//get a single factory by id
-app.post('/api/getAFactory', (req,res) => {
-  db.Factory.findById(req.body.factoryId,
-    (err) => {
-      if(err) return handleUnexpectedError(err);
-    }).then((doc) => res.send(doc))
-});
-
-//update Factory API
-app.post('/api/updateFactory', (req, res) => {
-  db.Factory.findByIdAndUpdate(
-    req.body.factoryId,
-    {factory: {
+//find by id and update Doc API
+app.post('/api/updateDoc', (req, res) => {
+  db.Doc.findByIdAndUpdate(
+    req.body.docId,
+    {field: {
       name: req.body.name,
-      childUpperLimit: req.body.upper,
-      childLowerLimit: req.body.lower
       }
     },
     {
@@ -72,69 +77,32 @@ app.post('/api/updateFactory', (req, res) => {
   }, (e) => {res.send(e)})
 });
 
-//add child API
-app.post('/api/createChild', (req, res) => {
-  console.log(req.body.factoryId);
-  var saveChild = (newChild) => {
-    children.push(newChild);
-  };
-  //generate random number for new entry into children array
-  var getRandomInt = (min, max) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random()*(max - min)) + min;
-    
-  }//req.body.newChild;
 
-  
-  db.Factory.findById(
-    req.body.factoryId,(err, doc) => {
-      if(err) return handleUnexpectedError(err);
-      if(doc.children.length >= 15)  return res.send('Too many child entries.')
-    doc.update(
-      {$push: 
-        {children: {
-          $each: [{number: getRandomInt(doc.factory.childLowerLimit, doc.factory.childUpperLimit)}],
-          $positon: 0,
-          $slice: 15 
-          }
-        }
-      },
-      (err, newDoc) => {
-        if(err) return handleUnexpectedError(err);
-        res.send(newDoc);
-      }
-    )
-});
-
-});
-
-
-//delete factory API
-app.delete('/api/deleteFactory', (req, res) => {
-  db.Factory.findByIdAndRemove(
-    req.body.factoryId,
+//delete Document API
+app.delete('/api/deleteDoc', (req, res) => {
+  db.Doc.findByIdAndRemove(
+    req.body.docId,
     ).then((doc) => res.send(doc)), 
   (e) => {res.send(e)};
 });
 
-//delete child API
-app.delete('/api/deleteChild', (req, res) => {
-  var child = db.Factory.children[req.body.childNumber];
-  db.Factory.findByIdAndUpdate(
-      req.body.factoryId,
-      {$pull: {children: {
-        _id: req.body.childId
-      }
-      }},
-      { new: true,
-        runValidators: true}
-  ).then((doc) => {
-    res.send(doc);
-  }, (e) => {
-    res.send('Something went wrong with deleting the child node.. :(');
-  }) 
-});
+//below code used for deleting a child component within an array (with a dedicated Schema)
+// app.delete('/api/deleteChild', (req, res) => {
+//   
+//   db.Doc.findByIdAndUpdate(
+//       req.body.fieldId,
+//       {$pull: {children: {
+//         _id: req.body.childId
+//       }
+//       }},
+//       { new: true,
+//         runValidators: true}
+//   ).then((doc) => {
+//     res.send(doc);
+//   }, (e) => {
+//     res.send('Something went wrong with deleting the child node.. :(');
+//   }) 
+// });
 
 //catchall
 app.get('*', (req, res) => {

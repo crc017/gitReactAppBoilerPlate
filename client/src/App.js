@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import API from './assets/API';
-import Root from './components/Root';
-import AddFactory from './components/AddFactory';
+import Collection from './components/Collection';
+import AddDoc from './components/AddDoc';
 import './App.css';
 
 class App extends Component {
@@ -11,8 +11,8 @@ class App extends Component {
 
     this.state = {
       info: [],
-      factories: [],
-      term: 'A New Factory',
+      collection: [],
+      term: 'A New Document',
       message:''
     };
 
@@ -20,7 +20,7 @@ class App extends Component {
 
   componentDidMount() {
     this.runGetTest();
-    this.runGetFactories();
+    this.runGetCollection();
   }
 
 
@@ -31,68 +31,57 @@ class App extends Component {
     .catch(err => console.log(err))
   }
 
-  runGetFactories = () => {
-    API.getFactories()
-    .then((res) => {this.setState({factories: res.data})
-           console.log("factory call data", res.data);   
+  runGetCollection = () => {
+    API.getCollection()
+    .then((res) => {this.setState({collection: res.data})
+           console.log("doc call data", res.data);   
     })
     .catch(err => console.log(err))
   }
 
-  runCreateFactory = () => {
-    API.createFactory(this.state.term)
+  runCreateDoc = () => {
+    API.createDoc(this.state.term)
     .then((res) => {
-      this.runGetFactories()
+      this.runGetCollection()
       console.log('message', res.data)})
     .catch(err => console.log('message', err))
   }
 
-  runCreateChild = (factoryId) => {
-    API.createChild(factoryId)
-    .then((res) => {
-      if(res){console.log('create child message', res)}
-      this.runGetFactories()
-    })
-    .catch(err => console.log('message', err))
-  }
-
-  runUpdateFactory = (factoryId, name, upper, lower) => {
-    API.updateFactory(factoryId, name, upper, lower)
+  runUpdateDoc = (docId, name) => {
+    API.updateDoc(docId, name)
     .then((res) => {
       console.log(res)
-      this.runGetFactories()
+      this.runGetCollection()
     })
   }
 
-  runDeleteFactory = (factoryId) => {
-    API.deleteFactory(factoryId)
+  runDeleteDoc = (docId) => {
+    API.deleteDoc(docId)
     .then((res) => {
       console.log(res)
-      if(res){this.runGetFactories()}
+      if(res){this.runGetCollection()}
       
     })
   
   }
-
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Passport Challenge</h1>
+          <h1 className="App-title">BOILER PLATE!!!!</h1>
         </header>
-        <AddFactory 
+        <AddDoc 
           term={this.state.term}
-          onInputChange={term => this.setState({term}, this.runGetFactories())}
-          onAddFactory={() =>  this.runCreateFactory()}
+          onInputChange={term => this.setState({term}, this.runGetCollection())}
+          onAddDoc={() =>  this.runCreateDoc()}
           />
         <h1>Root</h1>
-        <Root
-          factories={this.state.factories}
-          onModFactory={(factoryId, name, upper, lower)=> this.runUpdateFactory(factoryId, name, upper, lower)}
-          onAddChild={(factoryId) => this.runCreateChild(factoryId)}
-          onDeleteFactory={(factoryId) => this.runDeleteFactory(factoryId)}
+        <Collection
+          collection={this.state.collection}
+          onModDoc={(docId, name)=> this.runUpdateDoc(docId, name)}
+          onDeleteDoc={(docId) => this.runDeleteDoc(docId)}
           />
           <p>by Ryan Cox</p>
         {console.log("term:", this.state.term)}

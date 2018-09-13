@@ -1,15 +1,15 @@
 import React from 'react';
 
 
-const AddFactory = ({term, onInputChange, onAddFactory}) => {
+const AddDoc= ({term, onInputChange, onAddDoc}) => {
     return (
         <div>
             <input
                 value = {term}
                 onChange={event => onInputChange(event.target.value)} />
-            <button className="btn btn-primary" onClick={() => onAddFactory()}>Add Factory</button>
+            <button className="btn btn-primary" onClick={() => onAddDoc()}>Add Document</button>
         </div>
     )
 };
 
-export default AddFactory;
+export default AddDoc;

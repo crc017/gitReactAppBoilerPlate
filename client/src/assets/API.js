@@ -4,35 +4,29 @@ const API = {
     getTest: () => {
         return axios.get('/api/test')
     },
-    getFactories: () => {
-        return axios.get('/api/getFactories')
+    getCollection: () => {
+        return axios.get('/api/getCollection')
     },
-    createFactory: (name) => {
-        return axios.post('/api/createFactory', {
-                factoryName: name
+    getDoc: (id) => {
+        return axios.get('/api/getDoc', {
+            docId: id
         })
     },
-    createChild: (factoryId) => {
-        return axios.post('/api/createChild',{
-            factoryId: factoryId
+    createDoc: (name) => {
+        return axios.post('/api/createDoc', {
+                fieldName: name
         })
     },
-    deleteFactory: (factoryId) => {
-        return axios.delete('/api/deleteFactory', {
+    deleteDoc: (id) => {
+        return axios.delete('/api/deleteDoc', {
             data: {
-            factoryId: factoryId
+            docId: id
         }
         })   
     },
-    deleteChild: () => {
-        return axios.delete('/api/deleteChild')
-    },
-    updateFactory: (factoryId, name, upper, lower) => {
-        return axios.post('/api/updateFactory', {
-            factoryId: factoryId,
-            name: name,
-            upper: upper,
-            lower: lower
+    updateDoc: (id) => {
+        return axios.post('/api/updateDoc', {
+            docId: id
         })
     },
 
