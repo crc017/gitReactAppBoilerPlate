@@ -24,9 +24,10 @@ const API = {
         }
         })   
     },
-    updateDoc: (id) => {
+    updateDoc: (id, name) => {
         return axios.post('/api/updateDoc', {
-            docId: id
+            docId: id,
+            fieldName: name
         })
     },
 

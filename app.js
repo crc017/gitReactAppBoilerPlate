@@ -67,7 +67,7 @@ app.post('/api/updateDoc', (req, res) => {
   db.Doc.findByIdAndUpdate(
     req.body.docId,
     {field: {
-      name: req.body.name,
+      name: req.body.fieldName,
       }
     },
     {
