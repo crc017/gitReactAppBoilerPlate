@@ -2,9 +2,13 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const app = express();
-const db = require('./model');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const db = require('./model');
+const app = express();
+
+//set helmet headers
+app.use(helmet());
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
@@ -21,6 +25,7 @@ mongoose.connect(
 //-----------------------------------------------------------------------//
 //-----------------------------------------------------------------------//
 //-----------------------------API ENDPOINTS-----------------------------//
+
 
 
 // Put all API endpoints under '/api'

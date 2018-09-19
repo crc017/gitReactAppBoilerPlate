@@ -77,13 +77,13 @@ class App extends Component {
           onInputChange={term => this.setState({term}, this.runGetCollection())}
           onAddDoc={() =>  this.runCreateDoc()}
           />
-        <h1>Root</h1>
+        <h1>Collection</h1>
         <Collection
           collection={this.state.collection}
           onModDoc={(docId, name)=> this.runUpdateDoc(docId, name)}
           onDeleteDoc={(docId) => this.runDeleteDoc(docId)}
           />
-          <p>by Ryan Cox</p>
+          <p>by Me</p>
         {console.log("term:", this.state.term)}
       </div>
     );
